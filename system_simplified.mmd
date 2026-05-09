@@ -1,0 +1,39 @@
+flowchart LR
+    System["System"] -->|hasRobot| Robot1["Robot 1"]
+    System -->|hasRobot| Robot2["Robot 2"]
+    System -->|hasRobot| Robot3["Robot 3"]
+    System -->|makesProduct| Product["Timber slab with column"]
+
+    Robot1 -->|hasTool| Drill["Drill"]
+    Robot1 -->|doesProcess| DrillStep["Drill holes"]
+
+    Robot2 -->|hasTool| Gripper["Gripper"]
+    Robot2 -->|hasExternalAxis| Axis7["Axis 7 rail"]
+    Robot2 -->|doesProcess| MovePlate["Move plates"]
+    Robot2 -->|doesProcess| MoveReinf["Move reinforcement"]
+    Robot2 -->|doesProcess| PlaceColumn["Place column"]
+    Robot2 -->|doesProcess| Assemble["Assemble slab"]
+
+    Robot3 -->|hasTool| Saw["Saw"]
+    Robot3 -->|doesProcess| CutStep["Cut timber parts"]
+
+    Product -->|hasComponent| Bottom["Bottom plate"]
+    Product -->|hasComponent| Top["Top plate"]
+    Product -->|hasComponent| Reinf["Reinforcement between plates"]
+    Product -->|hasComponent| Column["Timber column"]
+
+    Bottom -->|hasMaterial| Softwood["Softwood"]
+    Top -->|hasMaterial| Softwood
+    Column -->|hasMaterial| Softwood
+    Reinf -->|hasMaterial| BeechLVL["Beech LVL timber"]
+
+    Reinf -->|isBetween| Bottom
+    Reinf -->|isBetween| Top
+    Column -->|isConnectedTo| Top
+    Column -->|isConnectedTo| Reinf
+
+    MovePlate -->|movesComponent| Bottom
+    MovePlate -->|movesComponent| Top
+    MoveReinf -->|movesComponent| Reinf
+    PlaceColumn -->|movesComponent| Column
+    Assemble -->|makesComponent| Product

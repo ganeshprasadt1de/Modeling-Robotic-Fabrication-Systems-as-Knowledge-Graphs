@@ -1,0 +1,398 @@
+@prefix ex: <http://example.org/timber-system#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:System a ex:RoboticSystem ;
+    rdfs:label "System" ;
+    ex:hasRobot ex:Robot1, ex:Robot2, ex:Robot3 ;
+    ex:hasWorkstation ex:Workstation1, ex:Workstation2 ;
+    ex:hasExternalAxis ex:TransferRail ;
+    ex:hasController ex:SystemController ;
+    ex:hasSafetyDevice ex:SafetyScanner, ex:EmergencyStop ;
+    ex:hasModel ex:KUKA_KR6_R900_Model ;
+    ex:hasProcess ex:DrillStep, ex:CutStep, ex:MovePlateStep, ex:MoveReinforcementStep,
+        ex:PlaceColumnStep, ex:AssembleStep, ex:CheckStep ;
+    ex:makesProduct ex:TimberSlabWithColumn .
+
+ex:SystemController a ex:Controller ;
+    rdfs:label "System controller" ;
+    ex:controlsRobot ex:Robot1, ex:Robot2, ex:Robot3 ;
+    ex:monitors ex:Workstation1, ex:Workstation2, ex:TransferRail .
+
+ex:SafetyScanner a ex:SafetyDevice, ex:Sensor ;
+    rdfs:label "Safety scanner" ;
+    ex:monitors ex:System ;
+    ex:canStop ex:Robot1, ex:Robot2, ex:Robot3 ;
+    ex:givesFeedbackTo ex:SystemController ;
+    ex:measures "person near work area" .
+
+ex:EmergencyStop a ex:SafetyDevice ;
+    rdfs:label "Emergency stop" ;
+    ex:canStop ex:Robot1, ex:Robot2, ex:Robot3 ;
+    ex:givesFeedbackTo ex:SystemController .
+
+ex:KUKA_KR6_R900_Model a ex:RobotModel ;
+    rdfs:label "KUKA KR6 R900 model" ;
+    ex:maxPayloadKg "6.0"^^xsd:decimal ;
+    ex:hasCADFile ex:KUKA_KR6_R900_STEP .
+
+ex:KUKA_KR6_R900_STEP a ex:CADFile ;
+    rdfs:label "KUKA STEP file" ;
+    ex:fileName "KUKA KR6 R900 sixx.stp" ;
+    ex:fileFormat "STEP" ;
+    ex:filePath "kuka_kr6_r900_model.zip/KUKA KR6 R900 sixx.stp" ;
+    ex:represents ex:KUKA_KR6_R900_Model .
+
+ex:Workstation1 a ex:Workstation ;
+    rdfs:label "Workstation 1" ;
+    ex:locationInPlan "left work area" .
+
+ex:Workstation2 a ex:Workstation ;
+    rdfs:label "Workstation 2" ;
+    ex:locationInPlan "right work area" .
+
+ex:TransferRail a ex:ExternalAxis ;
+    rdfs:label "Axis 7 rail" ;
+    ex:locationInPlan "rail between workstations" .
+
+ex:Robot1 a ex:Robot, ex:Machine ;
+    rdfs:label "Robot 1" ;
+    ex:hasModel ex:KUKA_KR6_R900_Model ;
+    ex:hasController ex:Robot1Controller ;
+    ex:hasTool ex:DrillTool ;
+    ex:hasToolPose ex:Robot1ToolPose ;
+    ex:hasAxisState ex:Robot1AxisState ;
+    ex:hasSensor ex:Robot1AxisSensor, ex:Robot1ToolSensor, ex:Robot1DrillSensor ;
+    ex:hasAxisDrive ex:Robot1AxisDrive ;
+    ex:isAt ex:Workstation1 ;
+    ex:doesProcess ex:DrillStep .
+
+ex:Robot2 a ex:Robot, ex:Machine ;
+    rdfs:label "Robot 2" ;
+    ex:hasModel ex:KUKA_KR6_R900_Model ;
+    ex:hasController ex:Robot2Controller ;
+    ex:hasTool ex:GripperTool ;
+    ex:hasToolPose ex:Robot2ToolPose ;
+    ex:hasAxisState ex:Robot2AxisState ;
+    ex:hasExternalAxis ex:TransferRail ;
+    ex:hasSensor ex:Robot2AxisSensor, ex:Robot2ToolSensor, ex:Robot2GripSensor, ex:Robot2RailSensor ;
+    ex:hasAxisDrive ex:Robot2AxisDrive, ex:Robot2RailDrive ;
+    ex:isAt ex:TransferRail ;
+    ex:doesProcess ex:MovePlateStep, ex:MoveReinforcementStep, ex:PlaceColumnStep, ex:AssembleStep .
+
+ex:Robot3 a ex:Robot, ex:Machine ;
+    rdfs:label "Robot 3" ;
+    ex:hasModel ex:KUKA_KR6_R900_Model ;
+    ex:hasController ex:Robot3Controller ;
+    ex:hasTool ex:SawTool ;
+    ex:hasToolPose ex:Robot3ToolPose ;
+    ex:hasAxisState ex:Robot3AxisState ;
+    ex:hasSensor ex:Robot3AxisSensor, ex:Robot3ToolSensor, ex:Robot3SawSensor ;
+    ex:hasAxisDrive ex:Robot3AxisDrive ;
+    ex:isAt ex:Workstation2 ;
+    ex:doesProcess ex:CutStep .
+
+ex:Robot1Controller a ex:Controller ;
+    rdfs:label "Robot 1 controller" ;
+    ex:controlledBy ex:SystemController ;
+    ex:hasProgram ex:Robot1Program ;
+    ex:controlsTool ex:DrillTool ;
+    ex:controlsAxisDrive ex:Robot1AxisDrive .
+
+ex:Robot2Controller a ex:Controller ;
+    rdfs:label "Robot 2 controller" ;
+    ex:controlledBy ex:SystemController ;
+    ex:hasProgram ex:Robot2Program ;
+    ex:controlsTool ex:GripperTool ;
+    ex:controlsAxisDrive ex:Robot2AxisDrive, ex:Robot2RailDrive ;
+    ex:controlsExternalAxis ex:TransferRail .
+
+ex:Robot3Controller a ex:Controller ;
+    rdfs:label "Robot 3 controller" ;
+    ex:controlledBy ex:SystemController ;
+    ex:hasProgram ex:Robot3Program ;
+    ex:controlsTool ex:SawTool ;
+    ex:controlsAxisDrive ex:Robot3AxisDrive .
+
+ex:Robot1Program a ex:Program ;
+    rdfs:label "Robot 1 program" ;
+    ex:hasCommand ex:MoveToDrillCommand, ex:DrillCommand ;
+    ex:checksProcess ex:DrillStep .
+
+ex:Robot2Program a ex:Program ;
+    rdfs:label "Robot 2 program" ;
+    ex:hasCommand ex:MoveOnRailCommand, ex:GripCommand, ex:PlaceCommand ;
+    ex:checksProcess ex:MovePlateStep, ex:MoveReinforcementStep, ex:PlaceColumnStep, ex:AssembleStep .
+
+ex:Robot3Program a ex:Program ;
+    rdfs:label "Robot 3 program" ;
+    ex:hasCommand ex:MoveToCutCommand, ex:SawCommand ;
+    ex:checksProcess ex:CutStep .
+
+ex:MoveToDrillCommand a ex:Command ;
+    rdfs:label "Move to drill point" ;
+    ex:sentTo ex:Robot1AxisDrive .
+
+ex:DrillCommand a ex:Command ;
+    rdfs:label "Drill hole" ;
+    ex:sentTo ex:DrillTool .
+
+ex:MoveOnRailCommand a ex:Command ;
+    rdfs:label "Move on rail" ;
+    ex:sentTo ex:Robot2RailDrive .
+
+ex:GripCommand a ex:Command ;
+    rdfs:label "Grip part" ;
+    ex:sentTo ex:GripperTool .
+
+ex:PlaceCommand a ex:Command ;
+    rdfs:label "Place part" ;
+    ex:sentTo ex:Robot2AxisDrive, ex:GripperTool .
+
+ex:MoveToCutCommand a ex:Command ;
+    rdfs:label "Move to cut line" ;
+    ex:sentTo ex:Robot3AxisDrive .
+
+ex:SawCommand a ex:Command ;
+    rdfs:label "Cut part" ;
+    ex:sentTo ex:SawTool .
+
+ex:Robot1AxisDrive a ex:AxisDrive ;
+    rdfs:label "Robot 1 axis drive" ;
+    ex:controlsAxis "A1 A2 A3 A4 A5 A6" .
+
+ex:Robot2AxisDrive a ex:AxisDrive ;
+    rdfs:label "Robot 2 axis drive" ;
+    ex:controlsAxis "A1 A2 A3 A4 A5 A6" .
+
+ex:Robot2RailDrive a ex:AxisDrive ;
+    rdfs:label "Axis 7 drive" ;
+    ex:controlsAxis "A7" ;
+    ex:controlsExternalAxis ex:TransferRail .
+
+ex:Robot3AxisDrive a ex:AxisDrive ;
+    rdfs:label "Robot 3 axis drive" ;
+    ex:controlsAxis "A1 A2 A3 A4 A5 A6" .
+
+ex:DrillTool a ex:Tool ;
+    rdfs:label "Drill" ;
+    ex:usedBy ex:Robot1 ;
+    ex:usedInProcess ex:DrillStep .
+
+ex:GripperTool a ex:Tool ;
+    rdfs:label "Gripper" ;
+    ex:usedBy ex:Robot2 ;
+    ex:usedInProcess ex:MovePlateStep, ex:MoveReinforcementStep, ex:PlaceColumnStep, ex:AssembleStep .
+
+ex:SawTool a ex:Tool ;
+    rdfs:label "Saw" ;
+    ex:usedBy ex:Robot3 ;
+    ex:usedInProcess ex:CutStep .
+
+ex:Robot1AxisSensor a ex:Sensor ;
+    rdfs:label "Robot 1 axis sensor" ;
+    ex:measures "A1 to A6" ;
+    ex:givesFeedbackTo ex:Robot1Controller .
+
+ex:Robot2AxisSensor a ex:Sensor ;
+    rdfs:label "Robot 2 axis sensor" ;
+    ex:measures "A1 to A6" ;
+    ex:givesFeedbackTo ex:Robot2Controller .
+
+ex:Robot2RailSensor a ex:Sensor ;
+    rdfs:label "Axis 7 sensor" ;
+    ex:measures "A7" ;
+    ex:givesFeedbackTo ex:Robot2Controller .
+
+ex:Robot3AxisSensor a ex:Sensor ;
+    rdfs:label "Robot 3 axis sensor" ;
+    ex:measures "A1 to A6" ;
+    ex:givesFeedbackTo ex:Robot3Controller .
+
+ex:Robot1ToolSensor a ex:Sensor ;
+    rdfs:label "Robot 1 tool sensor" ;
+    ex:measures "drill position" ;
+    ex:givesFeedbackTo ex:Robot1Controller ;
+    ex:checksProcess ex:DrillStep .
+
+ex:Robot2ToolSensor a ex:Sensor ;
+    rdfs:label "Robot 2 tool sensor" ;
+    ex:measures "gripper position" ;
+    ex:givesFeedbackTo ex:Robot2Controller ;
+    ex:checksProcess ex:MovePlateStep, ex:MoveReinforcementStep, ex:PlaceColumnStep, ex:AssembleStep .
+
+ex:Robot3ToolSensor a ex:Sensor ;
+    rdfs:label "Robot 3 tool sensor" ;
+    ex:measures "saw position" ;
+    ex:givesFeedbackTo ex:Robot3Controller ;
+    ex:checksProcess ex:CutStep .
+
+ex:Robot1DrillSensor a ex:Sensor ;
+    rdfs:label "Drill sensor" ;
+    ex:measures "drill contact" ;
+    ex:givesFeedbackTo ex:Robot1Controller ;
+    ex:checksProcess ex:DrillStep .
+
+ex:Robot2GripSensor a ex:Sensor ;
+    rdfs:label "Grip sensor" ;
+    ex:measures "part held" ;
+    ex:givesFeedbackTo ex:Robot2Controller ;
+    ex:checksProcess ex:MovePlateStep, ex:MoveReinforcementStep, ex:PlaceColumnStep, ex:AssembleStep .
+
+ex:Robot3SawSensor a ex:Sensor ;
+    rdfs:label "Saw sensor" ;
+    ex:measures "saw running" ;
+    ex:givesFeedbackTo ex:Robot3Controller ;
+    ex:checksProcess ex:CutStep .
+
+ex:Robot1ToolPose a ex:ToolPose ;
+    rdfs:label "Robot 1 tool pose" .
+
+ex:Robot2ToolPose a ex:ToolPose ;
+    rdfs:label "Robot 2 tool pose" .
+
+ex:Robot3ToolPose a ex:ToolPose ;
+    rdfs:label "Robot 3 tool pose" .
+
+ex:Robot1AxisState a ex:AxisState ;
+    rdfs:label "Robot 1 axes" ;
+    ex:axisValueRange "0 to 1" .
+
+ex:Robot2AxisState a ex:AxisState ;
+    rdfs:label "Robot 2 axes" ;
+    ex:hasExternalAxisValue ex:axis7 ;
+    ex:axisValueRange "0 to 1" .
+
+ex:Robot3AxisState a ex:AxisState ;
+    rdfs:label "Robot 3 axes" ;
+    ex:axisValueRange "0 to 1" .
+
+ex:Softwood a ex:Material ;
+    rdfs:label "Softwood" ;
+    ex:woodType "soft" ;
+    ex:usedInProduct ex:TimberSlabWithColumn .
+
+ex:BeechLVL a ex:Material ;
+    rdfs:label "Beech LVL timber" ;
+    ex:woodType "hard" ;
+    ex:usedInProduct ex:TimberSlabWithColumn .
+
+ex:TimberSlabWithColumn a ex:Product, ex:BuildingComponent ;
+    rdfs:label "Timber slab with column" ;
+    ex:hasComponent ex:BottomPlate, ex:TopPlate, ex:ReinforcementBetweenPlates, ex:TimberColumn ;
+    ex:hasMaterial ex:Softwood, ex:BeechLVL ;
+    ex:madeBy ex:System .
+
+ex:BottomPlate a ex:BuildingComponent ;
+    rdfs:label "Bottom plate" ;
+    ex:componentType "plate" ;
+    ex:hasMaterial ex:Softwood ;
+    ex:hasLengthM "2.40"^^xsd:decimal ;
+    ex:hasWidthM "1.80"^^xsd:decimal ;
+    ex:hasHeightM "0.12"^^xsd:decimal ;
+    ex:estimatedWeightKg "4.2"^^xsd:decimal ;
+    ex:isComponentOf ex:TimberSlabWithColumn ;
+    ex:isConnectedTo ex:ReinforcementBetweenPlates .
+
+ex:TopPlate a ex:BuildingComponent ;
+    rdfs:label "Top plate" ;
+    ex:componentType "plate" ;
+    ex:hasMaterial ex:Softwood ;
+    ex:hasLengthM "2.40"^^xsd:decimal ;
+    ex:hasWidthM "1.80"^^xsd:decimal ;
+    ex:hasHeightM "0.12"^^xsd:decimal ;
+    ex:estimatedWeightKg "4.2"^^xsd:decimal ;
+    ex:isComponentOf ex:TimberSlabWithColumn ;
+    ex:isConnectedTo ex:ReinforcementBetweenPlates, ex:TimberColumn .
+
+ex:ReinforcementBetweenPlates a ex:BuildingComponent ;
+    rdfs:label "Reinforcement between plates" ;
+    ex:componentType "reinforcement" ;
+    ex:hasMaterial ex:BeechLVL ;
+    ex:hasLengthM "1.80"^^xsd:decimal ;
+    ex:hasWidthM "1.20"^^xsd:decimal ;
+    ex:hasHeightM "0.18"^^xsd:decimal ;
+    ex:estimatedWeightKg "2.8"^^xsd:decimal ;
+    ex:isBetween ex:BottomPlate, ex:TopPlate ;
+    ex:isComponentOf ex:TimberSlabWithColumn ;
+    ex:isConnectedTo ex:BottomPlate, ex:TopPlate, ex:TimberColumn .
+
+ex:TimberColumn a ex:BuildingComponent ;
+    rdfs:label "Timber column" ;
+    ex:componentType "column" ;
+    ex:hasMaterial ex:Softwood ;
+    ex:hasLengthM "0.20"^^xsd:decimal ;
+    ex:hasWidthM "0.20"^^xsd:decimal ;
+    ex:hasHeightM "1.50"^^xsd:decimal ;
+    ex:estimatedWeightKg "5.5"^^xsd:decimal ;
+    ex:isComponentOf ex:TimberSlabWithColumn ;
+    ex:isConnectedTo ex:TopPlate, ex:ReinforcementBetweenPlates .
+
+ex:DrillStep a ex:Process ;
+    rdfs:label "Drill holes" ;
+    ex:doneBy ex:Robot1 ;
+    ex:usesTool ex:DrillTool ;
+    ex:changesComponent ex:BottomPlate, ex:TopPlate, ex:ReinforcementBetweenPlates ;
+    ex:makesComponent ex:DrilledConnectionZone ;
+    ex:partOfSystem ex:System .
+
+ex:CutStep a ex:Process ;
+    rdfs:label "Cut timber parts" ;
+    ex:doneBy ex:Robot3 ;
+    ex:usesTool ex:SawTool ;
+    ex:changesComponent ex:BottomPlate, ex:TopPlate, ex:ReinforcementBetweenPlates, ex:TimberColumn ;
+    ex:makesComponent ex:CutTimberPart ;
+    ex:partOfSystem ex:System .
+
+ex:MovePlateStep a ex:Process ;
+    rdfs:label "Move plates" ;
+    ex:doneBy ex:Robot2 ;
+    ex:usesTool ex:GripperTool ;
+    ex:movesComponent ex:BottomPlate, ex:TopPlate ;
+    ex:before ex:AssembleStep ;
+    ex:partOfSystem ex:System .
+
+ex:MoveReinforcementStep a ex:Process ;
+    rdfs:label "Move reinforcement" ;
+    ex:doneBy ex:Robot2 ;
+    ex:usesTool ex:GripperTool ;
+    ex:movesComponent ex:ReinforcementBetweenPlates ;
+    ex:before ex:AssembleStep ;
+    ex:partOfSystem ex:System .
+
+ex:PlaceColumnStep a ex:Process ;
+    rdfs:label "Place column" ;
+    ex:doneBy ex:Robot2 ;
+    ex:usesTool ex:GripperTool ;
+    ex:movesComponent ex:TimberColumn ;
+    ex:changesComponent ex:TimberSlabWithColumn ;
+    ex:before ex:AssembleStep ;
+    ex:partOfSystem ex:System .
+
+ex:AssembleStep a ex:Process ;
+    rdfs:label "Assemble slab" ;
+    ex:doneBy ex:Robot2 ;
+    ex:usesTool ex:GripperTool ;
+    ex:makesComponent ex:TimberSlabWithColumn ;
+    ex:before ex:CheckStep ;
+    ex:partOfSystem ex:System .
+
+ex:CheckStep a ex:Process ;
+    rdfs:label "Check assembly" ;
+    ex:doneBy ex:System ;
+    ex:checksComponent ex:TimberSlabWithColumn ;
+    ex:partOfSystem ex:System .
+
+ex:DrilledConnectionZone a ex:BuildingComponent ;
+    rdfs:label "Drilled connection zone" ;
+    ex:hasMaterial ex:Softwood, ex:BeechLVL ;
+    ex:isInputFor ex:AssembleStep .
+
+ex:CutTimberPart a ex:BuildingComponent ;
+    rdfs:label "Cut timber part" ;
+    ex:hasMaterial ex:Softwood, ex:BeechLVL ;
+    ex:isInputFor ex:AssembleStep .
+
+ex:TimberSlabWithColumn ex:dependsOnProcess ex:DrillStep, ex:CutStep, ex:MovePlateStep,
+        ex:MoveReinforcementStep, ex:PlaceColumnStep, ex:AssembleStep ;
+    ex:dependsOnMaterial ex:Softwood, ex:BeechLVL .

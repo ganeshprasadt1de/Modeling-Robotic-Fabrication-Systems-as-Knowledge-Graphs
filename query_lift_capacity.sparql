@@ -1,0 +1,28 @@
+PREFIX ex: <http://example.org/timber-system#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT
+  ?componentLabel
+  ?weightKg
+  ?maxPayloadKg
+  ?sensorLabel
+  ?liftDecision
+WHERE {
+  ex:Robot2 ex:hasModel ?model ;
+      ex:hasSensor ?sensor ;
+      ex:doesProcess ?process .
+
+  ?model ex:maxPayloadKg ?maxPayloadKg .
+
+  ?process ex:movesComponent ?component .
+
+  ?component rdfs:label ?componentLabel ;
+      ex:estimatedWeightKg ?weightKg .
+
+  ?sensor rdfs:label ?sensorLabel ;
+      ex:checksProcess ?process .
+
+  BIND(IF(?weightKg <= ?maxPayloadKg, "can lift", "too heavy") AS ?liftDecision)
+}
+ORDER BY ?componentLabel ?sensorLabel
+
