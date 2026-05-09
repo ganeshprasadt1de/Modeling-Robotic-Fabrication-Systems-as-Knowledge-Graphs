@@ -1,4 +1,4 @@
-# Graph Notes
+# Knowledge Graph
 
 ## System
 
