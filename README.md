@@ -18,8 +18,6 @@ Beech LVL timber is used for the stronger reinforcement between the plates.
 
 LVL means laminated veneer lumber. It is made from thin timber layers glued together, so it can be stronger and more stable than normal timber.
 
-The robot shape is linked to the file `KUKA KR6 R900 sixx.stp`.
-
 STEP is a CAD file format. CAD means computer-aided design, which is a 3D model used by design software.
 
 ## Main Nodes
