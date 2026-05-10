@@ -67,7 +67,7 @@ Main sensor nodes:
 - Robot2GripSensor
 - Robot2RailSensor
 
-## Single Query
+## Query
 
 Query file:
 
